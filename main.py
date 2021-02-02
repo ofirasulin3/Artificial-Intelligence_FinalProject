@@ -1,8 +1,4 @@
-# This is a sample Python script.
-
-# Press Shift+F10 to execute it or replace it with your code.
-# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
-
+import helpers
 
 def print_hi(name):
     # Use a breakpoint in the code line below to debug your script.
@@ -17,4 +13,9 @@ def process_data(csv_file):
 if __name__ == '__main__':
     print_hi('PyCharm')
 
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+    train_data_array = helpers.get_data_from_csv('train.csv')
+    print('train_data_array:\n', train_data_array, '\n')
+
+    test_data_array = helpers.get_data_from_csv('test.csv')
+    print('test_data_array:\n', test_data_array)
+

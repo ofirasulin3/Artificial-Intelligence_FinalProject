@@ -1,28 +1,32 @@
+import numpy as np
+import pandas as pd
+# from typing import *
 
-
-
-def get_data_from_csv(board_file_name):
-    """Returns the board data that is saved as a csv file in 'boards' folder.
-    The board data is a list that contains:
-        [0] size of board
-        [1] blocked poses on board
-        [2] starts poses of the players
+def get_data_from_csv(file_name):
+    """Returns the data that is saved as a csv file in current folder.
     """
-    board_path = os.path.join('boards', board_file_name)
-    board = np.loadtxt(open(board_path, "rb"), delimiter=" ")
+    # Using the function to load the data of example.csv into a Dataframe df
+    df = pd.read_csv(file_name)
+    # print("Indexes numbers: ")
+    # print(df.index)
+    # print()
+    # print("Columns names: ")
+    # print(df.columns)
+    # print("Columns dtypes: ")
+    # print(df.dtypes)
 
-    # mirror board
-    board = np.flipud(board)
-    i, j = len(board), len(board[0])
-    blocks = np.where(board == -1)
-    blocks = [(blocks[0][i], blocks[1][i]) for i in range(len(blocks[0]))]
-    start_player_1 = np.where(board == 1)
-    start_player_2 = np.where(board == 2)
+    # Print the Dataframe
+    # print(dataframe)
+    # df_ = df.astype(dtype={'diagnosis': np.float64})
+    # data_array = df_.to_numpy()
+    # data_array = df.to_numpy(dtype={'diagnosis': np.float64})
+    data_array = df.to_numpy()
 
-    if len(start_player_1[0]) != 1 or len(start_player_2[0]) != 1:
-        raise Exception('The given board is not legal - too many start locations.')
+    # data_array = np.loadtxt(file_name, delimiter=',', skiprows=1)
+    # print("data_array: ")
+    # print(data_array)
 
-    start_player_1 = (start_player_1[0][0], start_player_1[1][0])
-    start_player_2 = (start_player_2[0][0], start_player_2[1][0])
+    return data_array
 
-    return [(i, j), blocks, [start_player_1, start_player_2]]
+    # Return the Dataframe
+    # return df
