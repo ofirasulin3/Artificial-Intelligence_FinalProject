@@ -1,11 +1,12 @@
 
 
 class Node(object):
-    def __init__(self, feature, children: list = None, classification: str = None, value=None):
+    def __init__(self, feature, children: tuple = None, classification: str = None, threshold: float = None):
         self.feature = feature
         self.children = children
         self.classification = classification
-        self.value = value
+        # self.value = value
+        self.threshold = threshold
 
     def get_feature(self):
         return self.feature

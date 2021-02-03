@@ -1,4 +1,6 @@
 # from typing import List
+from pandas import DataFrame
+
 import helpers
 # from classifier_tree import *
 from helpers import *
@@ -10,11 +12,11 @@ class ID3:
     # self.train_array = train_array
     # self.test_data = test_array
 
-    def id3_algo(self, examples, features: List[str]):
+    def id3_algo(self, examples: DataFrame, features: List[str]):
         c = majority_class(examples)
-        self.td_idt_algo(examples, features, c, max_ig)
+        return self.td_idt_algo(examples, features, c, max_ig)
 
-    def td_idt_algo(self, examples, features: List[str], default_val, select_feature):
+    def td_idt_algo(self, examples: DataFrame, features: List[str], default_val, select_feature):
         if examples.len == 0:
             # Empty leaf. Use default classification
             return Node(feature=None, children=None, classification=default_val)
@@ -33,15 +35,28 @@ class ID3:
         if consistent_node:
             return Node(feature=None, children=None, classification=c)
 
-        f = select_feature(features, examples)
-        subtrees = []
+        threshold, f = select_feature(features, examples)
+        # entries_below = examples[f] < threshold
+        # entries_above = examples[f] >= threshold
+        entries_below, entries_above = filter_dataframe_by_threshold(examples, f, threshold)
+
         # for item in feature.values
         # subtree = ...
         # value = ...
         # subtree_tuple = [value, subtree]
         # subtrees.append[subtree_tuple]
 
-        return Node(feature=f, children=subtrees, classification=c)
+        # subtrees_tuples = []
+        # subtree1 = (threshold, self.td_idt_algo(entries_below, features, c, select_feature))
+        # subtrees_tuples.append(subtree1)
+        # subtree2 = (threshold, self.td_idt_algo(entries_above, features, c, select_feature))
+        # subtrees_tuples.append(subtree2)
+
+        subtree1 = self.td_idt_algo(entries_below, features, c, select_feature)
+        subtree2 = self.td_idt_algo(entries_above, features, c, select_feature)
+        children_tuple = (subtree1, subtree2)
+
+        return Node(feature=f, children=children_tuple, classification=c, threshold=threshold)
 
 
 def majority_class(patients):
@@ -62,12 +77,34 @@ if __name__ == '__main__':
     test_data = helpers.get_data_from_csv('test.csv')
     # print('test_data_array:\n', test_data_array)
     features_data = get_features_from_csv('train.csv')
-    id3_instance = ID3()
-    id3_instance.id3_algo(train_data, features_data)
+
+    print(train_data)
+
+    # filter_by_threshold = train_data['radius_mean'] < 20
+    # data_below = train_data[filter_by_threshold]
+    # print(data_below, '\n', '\n')
+    # id3_instance = ID3()
+    # id3_instance.id3_algo(train_data, features_data)
+
+    print(test_data['radius_mean'], '\n')
+    print(test_data['radius_mean'].sort_values().tolist(), '\n')
+    # print(test_data.sort_values(by='radius_mean'), '\n')
+    sorted_features = test_data['radius_mean'].sort_values().tolist()
+    thresholds = []
+    for i in range(1, len(sorted_features)):
+        thresholds.append((sorted_features[i] + sorted_features[i - 1]) / 2.0)
+    print('thresholds: \n', thresholds)
+
+    # predictions = []
+    # for patient_entry in test_data.iterrows():
+    #     print(patient_entry, '\n')
+    #     prediction = dt_classify(patient_entry, classifier)
+    #     predictions.append(prediction)
+    #
 
     # classifier = fit(train_array)
     #
-    # predictions = predict(classifier, test_data)
+    # predictions = predictions_calc(test_data, classifier)
     #
     # accuracy = helpers.calc_accuracy(test_data, predictions)
     #
