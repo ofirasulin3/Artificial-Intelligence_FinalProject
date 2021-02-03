@@ -17,7 +17,7 @@ class ID3:
         return self.td_idt_algo(examples, features, c, max_ig)
 
     def td_idt_algo(self, examples: DataFrame, features: List[str], default_val, select_feature):
-        if examples.len == 0:
+        if len(examples) == 0:
             # Empty leaf. Use default classification
             return Node(feature=None, children=None, classification=default_val)
         c = majority_class(examples)
@@ -35,7 +35,7 @@ class ID3:
         if consistent_node:
             return Node(feature=None, children=None, classification=c)
 
-        threshold, f = select_feature(features, examples)
+        threshold, f = select_feature(examples, features)
         # entries_below = examples[f] < threshold
         # entries_above = examples[f] >= threshold
         entries_below, entries_above = filter_dataframe_by_threshold(examples, f, threshold)
@@ -71,29 +71,21 @@ def majority_class(patients):
 
 
 if __name__ == '__main__':
-    train_data = helpers.get_data_from_csv('train.csv')
-    # print('train_data_array:\n', train_data_array, '\n')
 
-    test_data = helpers.get_data_from_csv('test.csv')
-    # print('test_data_array:\n', test_data_array)
-    features_data = get_features_from_csv('train.csv')
-
-    print(train_data)
+    # print(train_data)
 
     # filter_by_threshold = train_data['radius_mean'] < 20
     # data_below = train_data[filter_by_threshold]
     # print(data_below, '\n', '\n')
-    # id3_instance = ID3()
-    # id3_instance.id3_algo(train_data, features_data)
 
-    print(test_data['radius_mean'], '\n')
-    print(test_data['radius_mean'].sort_values().tolist(), '\n')
-    # print(test_data.sort_values(by='radius_mean'), '\n')
-    sorted_features = test_data['radius_mean'].sort_values().tolist()
-    thresholds = []
-    for i in range(1, len(sorted_features)):
-        thresholds.append((sorted_features[i] + sorted_features[i - 1]) / 2.0)
-    print('thresholds: \n', thresholds)
+    # print(test_data['radius_mean'], '\n')
+    # print(test_data['radius_mean'].sort_values().tolist(), '\n')
+    # # print(test_data.sort_values(by='radius_mean'), '\n')
+    # sorted_features = test_data['radius_mean'].sort_values().tolist()
+    # thresholds = []
+    # for i in range(1, len(sorted_features)):
+    #     thresholds.append((sorted_features[i] + sorted_features[i - 1]) / 2.0)
+    # print('thresholds: \n', thresholds)
 
     # predictions = []
     # for patient_entry in test_data.iterrows():
@@ -102,10 +94,19 @@ if __name__ == '__main__':
     #     predictions.append(prediction)
     #
 
+    train_data = helpers.get_data_from_csv('train.csv')
+    # print('train_data_array:\n', train_data_array, '\n')
+
+    test_data = helpers.get_data_from_csv('test.csv')
+    # print('test_data:\n', test_data)
+    # print('len(test_data): ', len(test_data))
+    features_data = get_features_from_csv('train.csv')
+    id3_instance = ID3()
+
+    classifier_tree = id3_instance.id3_algo(train_data, features_data)
     # classifier = fit(train_array)
-    #
-    # predictions = predictions_calc(test_data, classifier)
-    #
-    # accuracy = helpers.calc_accuracy(test_data, predictions)
-    #
-    # print(accuracy)
+    predictions = calc_predictions(test_data, classifier_tree)
+
+    accuracy = helpers.calc_accuracy(test_data, predictions)
+
+    print('\n\n\n\n\nfinal accuracy: ', accuracy)

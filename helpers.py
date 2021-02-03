@@ -48,7 +48,7 @@ def get_data_from_csv(file_name):
 
 
 # gets a data frame, a feature and a threshold and returns the 2 dataframes split by the threshold value
-def filter_dataframe_by_threshold(dataframe, feature: str, threshold):
+def filter_dataframe_by_threshold(dataframe, feature: str, threshold: float):
     below_threshold = dataframe[feature] < threshold
     above_threshold = dataframe[feature] >= threshold
     entries_below = dataframe[below_threshold]
@@ -56,11 +56,11 @@ def filter_dataframe_by_threshold(dataframe, feature: str, threshold):
     return entries_below, entries_above
 
 
-# calculates a list of predictions done by a given classifer on a given test data frame
+# calculates a list of predictions done by a given classifier on a given test data frame
 def calc_predictions(test_data: DataFrame, classifier):
     print('calc_predictions function: ')
     predictions = []
-    for patient_entry in test_data.iterrows():
+    for index, patient_entry in test_data.iterrows():
         print('real diagnosis is: ', patient_entry['diagnosis'], '\n')
         print(patient_entry, '\n')
         prediction = dt_classify(patient_entry, classifier)
@@ -124,7 +124,7 @@ def classification_entropy(examples: DataFrame, diagnosis):
     diagnosis_probability = classification_probability(examples, diagnosis)
     log_value = 0
     if diagnosis_probability > 0:
-        log_value = log(diagnosis_probability, base=2)
+        log_value = log(diagnosis_probability, 2)
     return diagnosis_probability * log_value
 
 
@@ -136,9 +136,14 @@ def group_entropy(examples: DataFrame):
 
 
 # returns the information gain of a specific feature
-def ig(examples: DataFrame, feature: str):
-    # calc H(E)
+def ig(examples: DataFrame, feature: str, threshold: float):
+    # calc H(E)1
     h_e = group_entropy(examples)
+    entries_below, entries_above = filter_dataframe_by_threshold(examples, feature, threshold)
+    entries_below_entropy = (len(entries_below) / len(examples)) * group_entropy(entries_below)
+    entries_above_entropy = (len(entries_above) / len(examples)) * group_entropy(entries_above)
+    return h_e - entries_below_entropy - entries_above_entropy
+
 
 def max_feature_ig(examples: DataFrame, feature: str):
     # info_gain_list = []
@@ -148,14 +153,29 @@ def max_feature_ig(examples: DataFrame, feature: str):
     # # print('max(info_gain_list)', max(info_gain_list))
     # return max(info_gain_list)
     # sorted_examples = examples[feature].sort_values()
+
+    # sorting the feature of the examples in current node.
     sorted_features = examples[feature].sort_values().tolist()
     thresholds = []
+
+    # defining k-1 thresholds
     for i in range(1, len(sorted_features)):
         thresholds.append((sorted_features[i] + sorted_features[i - 1]) / 2)
     # thresholds = [(sorted_features[i] + sorted_features[i - 1]) / 2 for i in sorted_features]
 
+    # going through thresholds and checking the k-1 binary characters
+    curr_max_ig = - 1.0
+    maximizing_threshold = -1.0
+    for threshold in thresholds:
+        curr_ig = ig(examples, feature, threshold)
+        # according to the FAQ- in the decision tree, if two splitting threshold values
+        # yield the same entropy we should pick the first one (the smallest)
+        if curr_ig > curr_max_ig:
+            curr_max_ig = curr_ig
+            maximizing_threshold = threshold
 
-    return - 1.0
+    return maximizing_threshold, curr_max_ig
+
 
 # returns the feature with the maximum gain.
 # if 2 features has the same maximum gain, we will return the one with the bigger index.
@@ -170,13 +190,13 @@ def max_ig(examples: DataFrame, features: List[str]):
         return ""
     curr_max_feature = ""
     curr_max_ig = - 1.0
+    curr_max_threshold = - 1.0
+    # ignoring the first feature. (the diagnosis feature)
     for i in range(1, len(features)):
-        curr_feature_ig = max_feature_ig(features[i])
+        curr_feature_threshold, curr_feature_ig = max_feature_ig(examples=examples, feature=features[i])
         if curr_feature_ig >= curr_max_ig:
             curr_max_ig = curr_feature_ig
             curr_max_feature = features[i]
+            curr_max_threshold = curr_feature_threshold
 
-    # TODO: need to ignore first feature somehow. (the diagnosis feature)
-
-    return curr_max_feature
-
+    return curr_max_threshold, curr_max_feature
