@@ -25,31 +25,17 @@ def get_data_from_csv(file_name):
     df = pd.read_csv(file_name)
     # data_array = df.to_numpy()
 
-    # print("Indexes numbers: ")
-    # print(df.index)
-    # print()
-    # print("Columns names: ")
-    # print(df.columns.tolist())
-    # print("Columns dtypes: ")
-    # print(df.dtypes)
-
-    # Print the Dataframe
-    # print(dataframe)
     # df_ = df.astype(dtype={'diagnosis': np.float64})
     # data_array = df_.to_numpy()
     # data_array = df.to_numpy(dtype={'diagnosis': np.float64})
-
     # data_array = np.loadtxt(file_name, delimiter=',', skiprows=1)
-    # print("data_array: ")
-    # print(data_array)
+
     # Return the Dataframe
     return df
-    # return data_array
 
 
 # gets a data frame, a feature and a threshold and returns the 2 dataframes split by the threshold value
 def filter_dataframe_by_threshold(dataframe, feature: str, threshold: float):
-    # print('filter_dataframe_by_threshold function: ')
     below_threshold = dataframe[feature] < threshold
     above_threshold = dataframe[feature] >= threshold
     entries_below = dataframe[below_threshold]
@@ -59,35 +45,29 @@ def filter_dataframe_by_threshold(dataframe, feature: str, threshold: float):
 
 # calculates a list of predictions done by a given classifier on a given test data frame
 def calc_predictions(test_data: DataFrame, classifier: Node):
-    print('calc_predictions function: ')
     predictions = []
     for index, patient_entry in test_data.iterrows():
-        print('real diagnosis is: ', patient_entry['diagnosis'], '\n')
-        print(patient_entry, '\n')
+        # print('real diagnosis is: ', patient_entry['diagnosis'], '\n')
         prediction = dt_classify(patient_entry, classifier)
-        print('prediction by dt_classify is: ', prediction, '\n')
+        # print('prediction by dt_classify is: ', prediction, '\n')
         predictions.append(prediction)
     return predictions
 
 
 # calculates the accuracy of a given classifier on a test data frame
 def calc_accuracy(test_dataframe: DataFrame, classifier: Node):
-    print('calc_accuracy function: ')
     real_classifications = test_dataframe['diagnosis'].tolist()
     predictions = calc_predictions(test_dataframe, classifier)
-    # true_positive = 0
-    # true_negative = 0
     assert len(real_classifications) == len(predictions)
     total = len(real_classifications)
     counter = 0
     for index, item in enumerate(real_classifications):
-        print('real classification item: ', item, '\n')
-        print('predictions[item]: ', predictions[index], '\n')
+        # print('real classification item: ', item, '\n')
+        # print('predictions[item]: ', predictions[index], '\n')
         if item == predictions[index]:
             counter += 1
-        print('counter of accuracy is: ', counter, '\n')
+        # print('counter of accuracy is: ', counter, '\n')
     accuracy = (counter * 1.0)/total
-    print('accuracy is: ', accuracy, '\n')
     return accuracy
 
 
@@ -113,7 +93,6 @@ def dt_classify(patient_entry, tree_node: Node):
 
 
 def classification_probability(examples: DataFrame, diagnosis):
-    # print('classification_probability function: ')
     if examples is None or len(examples) == 0:
         return 0
     count = len(examples[examples['diagnosis'] == diagnosis])
@@ -121,7 +100,6 @@ def classification_probability(examples: DataFrame, diagnosis):
 
 
 def classification_entropy(examples: DataFrame, diagnosis):
-    # print('calc_classification_entropy function: ')
     diagnosis_probability = classification_probability(examples, diagnosis)
     log_value = 0
     if diagnosis_probability > 0:
@@ -130,7 +108,6 @@ def classification_entropy(examples: DataFrame, diagnosis):
 
 
 def group_entropy(examples: DataFrame):
-    # print('calc_group_entropy function: ')
     ill_diagnosis_entropy = classification_entropy(examples, ILL)
     healthy_diagnosis_entropy = classification_entropy(examples, HEALTHY)
     return - ill_diagnosis_entropy - healthy_diagnosis_entropy
@@ -147,12 +124,10 @@ def ig(examples: DataFrame, feature: str, threshold: float):
 
 
 def max_feature_ig(examples: DataFrame, feature: str):
-    # print('max_feature_ig function: ')
     # info_gain_list = []
     # for feature in features:
     #     current_info_gain = ig(examples, feature)
     #     info_gain_list.append(current_info_gain)
-    # # print('max(info_gain_list)', max(info_gain_list))
     # return max(info_gain_list)
     # sorted_examples = examples[feature].sort_values()
 
@@ -182,13 +157,6 @@ def max_feature_ig(examples: DataFrame, feature: str):
 # returns the feature with the maximum gain.
 # if 2 features has the same maximum gain, we will return the one with the bigger index.
 def max_ig(examples: DataFrame, features: List[str]):
-    print('max_ig function: ')
-    # info_gain_list = []
-    # for feature in features:
-    #     current_info_gain = ig(examples, feature)
-    #     info_gain_list.append(current_info_gain)
-    # # print('max(info_gain_list)', max(info_gain_list))
-    # return max(info_gain_list)
     if features is None or len(features) == 0:
         return ""
     curr_max_feature = ""
