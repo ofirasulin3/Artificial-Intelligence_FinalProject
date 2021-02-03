@@ -1,5 +1,6 @@
 
-# a class for holding the classifier tree.
+# A class for holding a tree with classifying nodes.
+# Will be used to build the classifier tree
 class Node(object):
     def __init__(self, feature, children: tuple = None, classification: str = None, threshold: float = None):
         self.feature = feature

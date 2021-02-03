@@ -4,6 +4,7 @@ import helpers
 from helpers import *
 import matplotlib.pyplot as plt
 
+
 class ID3:
     # def __init__(self):
     # def __init__(self, train_array, test_array):
@@ -15,7 +16,7 @@ class ID3:
         c = majority_class(examples)
         return self.td_idt_algo(examples, features, c, max_ig)
 
-    # TDIDT algorithm for ID3 algorithm
+    # TD_IDT algorithm for ID3 algorithm
     def td_idt_algo(self, examples: DataFrame, features: List[str], default_val, select_feature):
         if len(examples) == 0:
             # Empty leaf. Use default classification
@@ -51,7 +52,7 @@ class ID3:
         c = majority_class(examples)
         return self.td_idt_pruning(examples, features, c, max_ig, pruning_m)
 
-    # TDIDT algorithm for ID3 algorithm with pre pruning
+    # TD_IDT algorithm for ID3 algorithm with pre pruning
     def td_idt_pruning(self, examples: DataFrame, features: List[str], default_val, select_feature, pruning_m):
         if len(examples) < pruning_m:
             # there is enough examples in current node so we can stop
@@ -91,7 +92,8 @@ class ID3:
 def experiment(training_data: DataFrame, features_names):
     # m_pruning_values = [2, 4, 8, 12, 16]
     # m_pruning_values = [1, 2, 3, 5, 8]
-    m_pruning_values = [16, 30, 50, 80, 120]
+    # m_pruning_values = [16, 30, 50, 80, 120]
+    m_pruning_values = [5, 8, 16, 30, 50]
     accuracies_list = []
     # 316251305
     # 123456789

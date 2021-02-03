@@ -57,7 +57,7 @@ def calc_predictions(test_data: DataFrame, classifier: Node):
 def calc_accuracy(test_dataframe: DataFrame, classifier: Node):
     real_classifications = test_dataframe['diagnosis'].tolist()
     predictions = calc_predictions(test_dataframe, classifier)
-    assert len(real_classifications) == len(predictions)
+    # assert len(real_classifications) == len(predictions)
     total = len(real_classifications)
     counter = 0
     for index, item in enumerate(real_classifications):
@@ -72,21 +72,25 @@ def calc_accuracy(test_dataframe: DataFrame, classifier: Node):
 
 # calculates the loss of a given classifier on a test data frame
 def calc_loss(test_dataframe: DataFrame, classifier: Node):
-    false_negative = 0
     false_positive = 0
+    # prediction is ill but real classification is healthy
+    false_negative = 0
+    # prediction is healthy but real classification is ill
+
     real_classifications = test_dataframe['diagnosis'].tolist()
     predictions = calc_predictions(test_dataframe, classifier)
-    assert len(real_classifications) == len(predictions)
+    # assert len(real_classifications) == len(predictions)
     total = len(real_classifications)
-    counter = 0
-    for index, item in enumerate(real_classifications):
+    for index, real in enumerate(real_classifications):
         # print('real classification item: ', item, '\n')
         # print('predictions[item]: ', predictions[index], '\n')
-        if item == predictions[index]:
-            counter += 1
-        # print('counter of accuracy is: ', counter, '\n')
-    accuracy = (counter * 1.0)/total
-    return accuracy
+        if predictions[index] == ILL and real == HEALTHY:
+            false_positive += 1
+        if predictions[index] == HEALTHY and real == ILL:
+            false_negative += 1
+        # print('false_positive is: ', false_positive, '\n')
+    loss = (false_positive * 0.1 + false_negative)/total
+    return loss
 
 
 # the classification algorithm. gets an object to classify and the classification tree.
@@ -134,6 +138,7 @@ def ig(examples: DataFrame, feature: str, threshold: float):
     entries_below_entropy = (len(entries_below) / len(examples)) * group_entropy(entries_below)
     entries_above_entropy = (len(entries_above) / len(examples)) * group_entropy(entries_above)
     return h_e - entries_below_entropy - entries_above_entropy
+
 
 # returns the maximum information gain of a specific feature (for dynamic ID3)
 def max_feature_ig(examples: DataFrame, feature: str):
