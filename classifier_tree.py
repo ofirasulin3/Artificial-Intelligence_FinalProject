@@ -11,5 +11,8 @@ class Node(object):
     def get_feature(self):
         return self.feature
 
+    def get_children(self):
+        return self.children
+
     # def add_child(self, child):
     #     self.children.append(child)

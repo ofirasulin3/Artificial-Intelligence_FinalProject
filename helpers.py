@@ -49,6 +49,7 @@ def get_data_from_csv(file_name):
 
 # gets a data frame, a feature and a threshold and returns the 2 dataframes split by the threshold value
 def filter_dataframe_by_threshold(dataframe, feature: str, threshold: float):
+    # print('filter_dataframe_by_threshold function: ')
     below_threshold = dataframe[feature] < threshold
     above_threshold = dataframe[feature] >= threshold
     entries_below = dataframe[below_threshold]
@@ -57,7 +58,7 @@ def filter_dataframe_by_threshold(dataframe, feature: str, threshold: float):
 
 
 # calculates a list of predictions done by a given classifier on a given test data frame
-def calc_predictions(test_data: DataFrame, classifier):
+def calc_predictions(test_data: DataFrame, classifier: Node):
     print('calc_predictions function: ')
     predictions = []
     for index, patient_entry in test_data.iterrows():
@@ -70,7 +71,7 @@ def calc_predictions(test_data: DataFrame, classifier):
 
 
 # calculates the accuracy of a given classifier on a test data frame
-def calc_accuracy(test_dataframe: DataFrame, classifier):
+def calc_accuracy(test_dataframe: DataFrame, classifier: Node):
     print('calc_accuracy function: ')
     real_classifications = test_dataframe['diagnosis'].tolist()
     predictions = calc_predictions(test_dataframe, classifier)
@@ -79,10 +80,10 @@ def calc_accuracy(test_dataframe: DataFrame, classifier):
     assert len(real_classifications) == len(predictions)
     total = len(real_classifications)
     counter = 0
-    for item in real_classifications:
+    for index, item in enumerate(real_classifications):
         print('real classification item: ', item, '\n')
-        print('predictions[item]: ', predictions[item], '\n')
-        if item == predictions[item]:
+        print('predictions[item]: ', predictions[index], '\n')
+        if item == predictions[index]:
             counter += 1
         print('counter of accuracy is: ', counter, '\n')
     accuracy = (counter * 1.0)/total
@@ -92,7 +93,7 @@ def calc_accuracy(test_dataframe: DataFrame, classifier):
 
 # the classification algorithm. gets an object to classify and the classification tree.
 def dt_classify(patient_entry, tree_node: Node):
-    if tree_node.children is None or len(tree_node.children) == 0:
+    if tree_node.get_children() is None or len(tree_node.get_children()) == 0:
         # if it's a leaf, we just return the classification stored there.
         return tree_node.classification
 
@@ -146,6 +147,7 @@ def ig(examples: DataFrame, feature: str, threshold: float):
 
 
 def max_feature_ig(examples: DataFrame, feature: str):
+    # print('max_feature_ig function: ')
     # info_gain_list = []
     # for feature in features:
     #     current_info_gain = ig(examples, feature)
@@ -180,6 +182,7 @@ def max_feature_ig(examples: DataFrame, feature: str):
 # returns the feature with the maximum gain.
 # if 2 features has the same maximum gain, we will return the one with the bigger index.
 def max_ig(examples: DataFrame, features: List[str]):
+    print('max_ig function: ')
     # info_gain_list = []
     # for feature in features:
     #     current_info_gain = ig(examples, feature)
