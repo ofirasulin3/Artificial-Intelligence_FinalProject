@@ -1,23 +1,22 @@
+
 from typing import List
 from math import log
-
-# import math
-# import numpy as np
 import pandas as pd
-# from typing import *
 from pandas import DataFrame
-
 from classifier_tree import *
 
+# defining the letters for the 2 available diagnosis for convenient use later
 ILL = 'M'
 HEALTHY = 'B'
 
 
+# exporting the features from a given csv file and returns a list of it
 def get_features_from_csv(file_name):
     df = pd.read_csv(file_name)
     return df.columns.tolist()
 
 
+# converting a given csv file to a dataframe
 def get_data_from_csv(file_name):
     """Returns the data that is saved as a csv file in current folder.
     """
@@ -71,6 +70,25 @@ def calc_accuracy(test_dataframe: DataFrame, classifier: Node):
     return accuracy
 
 
+# calculates the loss of a given classifier on a test data frame
+def calc_loss(test_dataframe: DataFrame, classifier: Node):
+    false_negative = 0
+    false_positive = 0
+    real_classifications = test_dataframe['diagnosis'].tolist()
+    predictions = calc_predictions(test_dataframe, classifier)
+    assert len(real_classifications) == len(predictions)
+    total = len(real_classifications)
+    counter = 0
+    for index, item in enumerate(real_classifications):
+        # print('real classification item: ', item, '\n')
+        # print('predictions[item]: ', predictions[index], '\n')
+        if item == predictions[index]:
+            counter += 1
+        # print('counter of accuracy is: ', counter, '\n')
+    accuracy = (counter * 1.0)/total
+    return accuracy
+
+
 # the classification algorithm. gets an object to classify and the classification tree.
 def dt_classify(patient_entry, tree_node: Node):
     if tree_node.get_children() is None or len(tree_node.get_children()) == 0:
@@ -78,20 +96,13 @@ def dt_classify(patient_entry, tree_node: Node):
         return tree_node.classification
 
     # for subtree in tree_node.children:
-    # TODO: maybe need get_feature()?
     patient_feature_value = patient_entry[tree_node.feature]
     if patient_feature_value >= tree_node.threshold:
         return dt_classify(patient_entry, tree_node.children[1])
     return dt_classify(patient_entry, tree_node.children[0])
 
-    # if patient_entry[subtree_tuple.get_feature()] == subtree_tuple[0]:
-    #     return dt_classify(patient_entry, subtree_tuple[1])
 
-
-# def h_entropy(values: List[]):
-#     return -1
-
-
+# calculating the probability for a specific classification in a given data
 def classification_probability(examples: DataFrame, diagnosis):
     if examples is None or len(examples) == 0:
         return 0
@@ -99,6 +110,7 @@ def classification_probability(examples: DataFrame, diagnosis):
     return (count * 1.0) / len(examples)
 
 
+# calculating the entropy for a specific classification
 def classification_entropy(examples: DataFrame, diagnosis):
     diagnosis_probability = classification_probability(examples, diagnosis)
     log_value = 0
@@ -107,6 +119,7 @@ def classification_entropy(examples: DataFrame, diagnosis):
     return diagnosis_probability * log_value
 
 
+# calculating the entropy for a group of examples
 def group_entropy(examples: DataFrame):
     ill_diagnosis_entropy = classification_entropy(examples, ILL)
     healthy_diagnosis_entropy = classification_entropy(examples, HEALTHY)
@@ -115,14 +128,14 @@ def group_entropy(examples: DataFrame):
 
 # returns the information gain of a specific feature
 def ig(examples: DataFrame, feature: str, threshold: float):
-    # calc H(E)1
+    # calc H(E)
     h_e = group_entropy(examples)
     entries_below, entries_above = filter_dataframe_by_threshold(examples, feature, threshold)
     entries_below_entropy = (len(entries_below) / len(examples)) * group_entropy(entries_below)
     entries_above_entropy = (len(entries_above) / len(examples)) * group_entropy(entries_above)
     return h_e - entries_below_entropy - entries_above_entropy
 
-
+# returns the maximum information gain of a specific feature (for dynamic ID3)
 def max_feature_ig(examples: DataFrame, feature: str):
     # info_gain_list = []
     # for feature in features:
