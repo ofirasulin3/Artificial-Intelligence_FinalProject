@@ -131,32 +131,14 @@ def cost_sensitive_majority_class(patients):
             healthy += 1
         else:
             ill += 1
-    return ILL if 10 * ill >= healthy else HEALTHY
-    # return ILL if ill > healthy else HEALTHY
-
-
-# calculating the probability for a specific classification in a given data
-def cost_sensitive_classification_probability(examples: DataFrame, diagnosis):
-    if examples is None or len(examples) == 0:
-        return 0
-    count = len(examples[examples['diagnosis'] == diagnosis])
-    return (count * 1.0) / len(examples)
-
-
-# calculating the entropy for a specific classification
-def cost_sensitive_classification_entropy(examples: DataFrame, diagnosis):
-    diagnosis_probability = cost_sensitive_classification_probability(examples, diagnosis)
-    log_value = 0
-    if diagnosis_probability > 0:
-        log_value = log(diagnosis_probability, 2)
-    return diagnosis_probability * log_value
+    return ILL if 3 * ill >= healthy else HEALTHY
 
 
 # calculating the entropy for a group of examples
 def cost_sensitive_group_entropy(examples: DataFrame):
-    ill_diagnosis_entropy = cost_sensitive_classification_entropy(examples, ILL)
-    healthy_diagnosis_entropy = cost_sensitive_classification_entropy(examples, HEALTHY)
-    return - ill_diagnosis_entropy - healthy_diagnosis_entropy
+    ill_diagnosis_entropy = classification_entropy(examples, ILL)
+    healthy_diagnosis_entropy = classification_entropy(examples, HEALTHY)
+    return - 10 * ill_diagnosis_entropy - healthy_diagnosis_entropy
 
 
 # returns the information gain of a specific feature
@@ -211,7 +193,6 @@ def cost_sensitive_max_ig(examples: DataFrame, features: List[str]):
             curr_max_threshold = curr_feature_threshold
 
     return curr_max_threshold, curr_max_feature
-
 
 
 if __name__ == '__main__':
