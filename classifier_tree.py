@@ -19,4 +19,3 @@ class Node(object):
 
     def get_threshold(self):
         return self.threshold
-

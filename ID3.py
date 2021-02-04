@@ -91,60 +91,39 @@ class ID3:
 # to run exercise 3.3:
 # look for "exercise 3.3" comment in the main, and read the instructions there.
 def experiment(training_data: DataFrame, features_names):
-    # m_pruning_values = [2, 4, 8, 12, 16]
-    # m_pruning_values = [1, 2, 3, 5, 8]
-    m_pruning_values = [5, 8, 1, 2, 3, 16, 30, 50, 80, 120]
-    # m_pruning_values = [16, 30, 50, 80, 120]
-    # m_pruning_values = [5, 8, 16, 30, 50]
+    m_pruning_values = [2, 4, 8, 12, 16]
+
     accuracies_list = []
-    # 316251305
-    # 123456789
-    accuracy_sum = 0.0
-    size_for_avg = 0
-    # avg = 0
-    kf = KFold(n_splits=5, shuffle=True, random_state=123456789)
+    avg = 0
+    kf = KFold(n_splits=5, shuffle=True, random_state=316251305)
     for m_pruning_val in m_pruning_values:
-        # accuracy_sum = 0
-        # size_for_avg = 0
-        print('m_pruning_val is: ', m_pruning_val)
+        accuracy_sum = 0
+        size_for_avg = 0
         curr_accuracies_list = []
         for train_i, test_i in kf.split(training_data):
 
             train_info = training_data.iloc[train_i]
-            # print('train_index is: ', train_i, '\n')
-            # print('train_info is: ', train_info, '\n')
 
             test_info = training_data.iloc[test_i]
-            # print('test_index is: ', test_i, '\n')
-            # print('test_info is: ', test_info, '\n')
 
-            # id3_pruning_instance = ID3().id3_pruning()
-            # curr_classifier_tree = id3_pruning_instance.id3_pruning(train_info, features_names, m_pruning_val)
             curr_classifier_tree = ID3().id3_pruning(train_info, features_names, m_pruning_val)
 
             curr_accuracy = helpers.calc_accuracy(test_info, curr_classifier_tree)
-            print('curr_accuracy is: ', curr_accuracy)
             curr_accuracies_list.append(curr_accuracy)
 
             accuracy_sum += curr_accuracy
-            # print('meanwhile accuracy_sum is: ', accuracy_sum)
             size_for_avg += 1
 
-        # print('curr_accuracies_list: ', curr_accuracies_list)
-        # print('size_for_avg is: ', size_for_avg)
-        # print('accuracy_sum for average is: ', accuracy_sum)
+        avg = accuracy_sum / size_for_avg
+        accuracies_list.append(avg)
 
-        # avg = accuracy_sum / size_for_avg
-        print('avg is: ', accuracy_sum / size_for_avg)
-        accuracies_list.append(accuracy_sum / size_for_avg)
-        print('list is: ', accuracies_list, '\n')
+    # Data for plotting
+    fig1, ax1 = plt.subplots()
+    ax1.plot(m_pruning_values, accuracies_list)
 
-        accuracy_sum = 0.0
-        size_for_avg = 0
-        # avg = 0.0
+    ax1.set(xlabel='M', ylabel='Accuracy', title='Accuracy as a function of M')
+    ax1.grid()
 
-    print(accuracies_list)
-    plt.plot(m_pruning_values, accuracies_list)
     plt.show()
 
 
@@ -174,7 +153,7 @@ if __name__ == '__main__':
 
     # exercise 3.3:
     # uncomment this line for running the experiment.
-    # make sure the 3 lines from ex1 (for getting data from csv file) are uncommented
+    # make sure the 3 lines from ex1 (for getting data from csv files) are uncommented
     experiment(train_data, features_data)
 
     # # exercise 3.4:
