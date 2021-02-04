@@ -11,7 +11,7 @@ HEALTHY = 'B'
 # parameters for KNN algorithm
 P_PARAM_FOR_KNN = 0.3
 N_PARAM_FOR_KNN = 13
-K_PARAM_FOR_KNN = 6
+K_PARAM_FOR_KNN = 5
 
 
 # exporting the features from a given csv file and returns a list of it
