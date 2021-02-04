@@ -6,10 +6,6 @@ import matplotlib.pyplot as plt
 
 
 class ID3:
-    # def __init__(self):
-    # def __init__(self, train_array, test_array):
-    # self.train_array = train_array
-    # self.test_data = test_array
 
     # ID3 algorithm
     def id3_algo(self, examples: DataFrame, features: List[str]):
@@ -151,20 +147,35 @@ if __name__ == '__main__':
     # accuracy = helpers.calc_accuracy(test_data, classifier_tree)
     # print(accuracy)
 
+    # ----------------------------------------------------------------------------------------------
     # exercise 3.3:
+
     # uncomment the coming line with "experiment" call, for running the experiment.
     # make sure the 3 lines at the start of main (for getting data from csv files) are uncommented
 
     # experiment(train_data, features_data)
 
+    # ----------------------------------------------------------------------------------------------
+
     # exercise 3.4:
+
     # id3_pruning_instance3_4 = ID3()
     # classifier_tree = id3_pruning_instance3_4.id3_pruning(train_data, features_data, pruning_m=2)
     # accuracy = helpers.calc_accuracy(test_data, classifier_tree)
     # print(accuracy)
 
+    # ----------------------------------------------------------------------------------------------
+
     # exercise 4.1:
-    id3_pruning_instance3_4 = ID3()
-    classifier_tree = id3_pruning_instance3_4.id3_pruning(train_data, features_data, pruning_m=2)
+
+    id3_pruning_instance4_1 = ID3()
+    classifier_tree = id3_pruning_instance4_1.id3_pruning(train_data, features_data, pruning_m=2)
     loss = helpers.calc_loss(test_data, classifier_tree)
     print(loss)
+
+    # ----------------------------------------------------------------------------------------------
+
+
+
+
+

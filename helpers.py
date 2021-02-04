@@ -16,20 +16,10 @@ def get_features_from_csv(file_name):
     return df.columns.tolist()
 
 
-# converting a given csv file to a dataframe
+# converting a given csv file in current folder to a dataframe
 def get_data_from_csv(file_name):
-    """Returns the data that is saved as a csv file in current folder.
-    """
     # Using the function to load the data of file_name.csv into a Dataframe df
     df = pd.read_csv(file_name)
-    # data_array = df.to_numpy()
-
-    # df_ = df.astype(dtype={'diagnosis': np.float64})
-    # data_array = df_.to_numpy()
-    # data_array = df.to_numpy(dtype={'diagnosis': np.float64})
-    # data_array = np.loadtxt(file_name, delimiter=',', skiprows=1)
-
-    # Return the Dataframe
     return df
 
 
@@ -46,9 +36,7 @@ def filter_dataframe_by_threshold(dataframe, feature: str, threshold: float):
 def calc_predictions(test_data: DataFrame, classifier: Node):
     predictions = []
     for index, patient_entry in test_data.iterrows():
-        # print('real diagnosis is: ', patient_entry['diagnosis'], '\n')
         prediction = dt_classify(patient_entry, classifier)
-        # print('prediction by dt_classify is: ', prediction, '\n')
         predictions.append(prediction)
     return predictions
 
@@ -57,15 +45,11 @@ def calc_predictions(test_data: DataFrame, classifier: Node):
 def calc_accuracy(test_dataframe: DataFrame, classifier: Node):
     real_classifications = test_dataframe['diagnosis'].tolist()
     predictions = calc_predictions(test_dataframe, classifier)
-    # assert len(real_classifications) == len(predictions)
     total = len(real_classifications)
     counter = 0
     for index, item in enumerate(real_classifications):
-        # print('real classification item: ', item, '\n')
-        # print('predictions[item]: ', predictions[index], '\n')
         if item == predictions[index]:
             counter += 1
-        # print('counter of accuracy is: ', counter, '\n')
     accuracy = (counter * 1.0)/total
     return accuracy
 
@@ -79,16 +63,12 @@ def calc_loss(test_dataframe: DataFrame, classifier: Node):
 
     real_classifications = test_dataframe['diagnosis'].tolist()
     predictions = calc_predictions(test_dataframe, classifier)
-    # assert len(real_classifications) == len(predictions)
     total = len(real_classifications)
     for index, real in enumerate(real_classifications):
-        # print('real classification item: ', item, '\n')
-        # print('predictions[item]: ', predictions[index], '\n')
         if predictions[index] == ILL and real == HEALTHY:
             false_positive += 1
         if predictions[index] == HEALTHY and real == ILL:
             false_negative += 1
-        # print('false_positive is: ', false_positive, '\n')
     loss = (false_positive * 0.1 + false_negative)/total
     return loss
 
@@ -143,12 +123,6 @@ def ig(examples: DataFrame, feature: str, threshold: float):
 
 # returns the maximum information gain of a specific feature (for dynamic ID3)
 def max_feature_ig(examples: DataFrame, feature: str):
-    # info_gain_list = []
-    # for feature in features:
-    #     current_info_gain = ig(examples, feature)
-    #     info_gain_list.append(current_info_gain)
-    # return max(info_gain_list)
-    # sorted_examples = examples[feature].sort_values()
 
     # sorting the feature of the examples in current node.
     sorted_features = examples[feature].sort_values().tolist()
@@ -157,7 +131,6 @@ def max_feature_ig(examples: DataFrame, feature: str):
     # defining k-1 thresholds
     for i in range(1, len(sorted_features)):
         thresholds.append((sorted_features[i] + sorted_features[i - 1]) / 2)
-    # thresholds = [(sorted_features[i] + sorted_features[i - 1]) / 2 for i in sorted_features]
 
     # going through thresholds and checking the k-1 binary characters
     curr_max_ig = - 1.0
