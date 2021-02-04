@@ -48,13 +48,14 @@ class ID3:
 
     # ID3 algorithm with pre pruning
     def id3_pruning(self, examples: DataFrame, features: List[str], pruning_m):
-        print('m_pruning_val is: ', pruning_m, '\n')
+        # print('m_pruning_val inside id3_pruning is: ', pruning_m, '\n')
         c = majority_class(examples)
         return self.td_idt_pruning(examples, features, c, max_ig, pruning_m)
 
     # TD_IDT algorithm for ID3 algorithm with pre pruning
     def td_idt_pruning(self, examples: DataFrame, features: List[str], default_val, select_feature, pruning_m):
         if len(examples) < pruning_m:
+            # print("pruned!!!")
             # there is enough examples in current node so we can stop
             return Node(feature=None, children=None, classification=default_val)
 
@@ -79,8 +80,8 @@ class ID3:
         entries_below, entries_above = filter_dataframe_by_threshold(examples, f, threshold)
 
         # divide the tree to 2 subtrees according to the threshold
-        subtree1 = self.td_idt_algo(entries_below, features, c, select_feature)
-        subtree2 = self.td_idt_algo(entries_above, features, c, select_feature)
+        subtree1 = self.td_idt_pruning(entries_below, features, c, select_feature, pruning_m)
+        subtree2 = self.td_idt_pruning(entries_above, features, c, select_feature, pruning_m)
         # add them as children to current node.
         children_tuple = (subtree1, subtree2)
 
@@ -92,17 +93,21 @@ class ID3:
 def experiment(training_data: DataFrame, features_names):
     # m_pruning_values = [2, 4, 8, 12, 16]
     # m_pruning_values = [1, 2, 3, 5, 8]
+    m_pruning_values = [5, 8, 1, 2, 3, 16, 30, 50, 80, 120]
     # m_pruning_values = [16, 30, 50, 80, 120]
-    m_pruning_values = [5, 8, 16, 30, 50]
+    # m_pruning_values = [5, 8, 16, 30, 50]
     accuracies_list = []
     # 316251305
     # 123456789
-    accuracy_sum = 0
+    accuracy_sum = 0.0
     size_for_avg = 0
+    # avg = 0
     kf = KFold(n_splits=5, shuffle=True, random_state=123456789)
     for m_pruning_val in m_pruning_values:
         # accuracy_sum = 0
         # size_for_avg = 0
+        print('m_pruning_val is: ', m_pruning_val)
+        curr_accuracies_list = []
         for train_i, test_i in kf.split(training_data):
 
             train_info = training_data.iloc[train_i]
@@ -113,24 +118,30 @@ def experiment(training_data: DataFrame, features_names):
             # print('test_index is: ', test_i, '\n')
             # print('test_info is: ', test_info, '\n')
 
-            id3_pruning_instance = ID3()
-
-            print('m_pruning_val is: ', m_pruning_val, '\n')
-
-            curr_classifier_tree = id3_pruning_instance.id3_pruning(train_info, features_names, m_pruning_val)
+            # id3_pruning_instance = ID3().id3_pruning()
+            # curr_classifier_tree = id3_pruning_instance.id3_pruning(train_info, features_names, m_pruning_val)
+            curr_classifier_tree = ID3().id3_pruning(train_info, features_names, m_pruning_val)
 
             curr_accuracy = helpers.calc_accuracy(test_info, curr_classifier_tree)
-            print('curr_accuracy is: ', curr_accuracy, '\n')
+            print('curr_accuracy is: ', curr_accuracy)
+            curr_accuracies_list.append(curr_accuracy)
 
             accuracy_sum += curr_accuracy
+            # print('meanwhile accuracy_sum is: ', accuracy_sum)
             size_for_avg += 1
-        # avg = accuracy_sum / len(m_pruning_values)
-        avg = accuracy_sum / size_for_avg
-        print('avg accuracy is: ', avg, '\n')
-        accuracies_list.append(avg)
 
-        accuracy_sum = 0
+        # print('curr_accuracies_list: ', curr_accuracies_list)
+        # print('size_for_avg is: ', size_for_avg)
+        # print('accuracy_sum for average is: ', accuracy_sum)
+
+        # avg = accuracy_sum / size_for_avg
+        print('avg is: ', accuracy_sum / size_for_avg)
+        accuracies_list.append(accuracy_sum / size_for_avg)
+        print('list is: ', accuracies_list, '\n')
+
+        accuracy_sum = 0.0
         size_for_avg = 0
+        # avg = 0.0
 
     print(accuracies_list)
     plt.plot(m_pruning_values, accuracies_list)
@@ -155,8 +166,8 @@ if __name__ == '__main__':
     train_data = helpers.get_data_from_csv('train.csv')
     test_data = helpers.get_data_from_csv('test.csv')
     features_data = get_features_from_csv('train.csv')
-    id3_instance = ID3()
 
+    # id3_instance = ID3()
     # classifier_tree = id3_instance.id3_algo(train_data, features_data)
     # accuracy = helpers.calc_accuracy(test_data, classifier_tree)
     # print(accuracy)

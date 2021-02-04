@@ -13,3 +13,10 @@ class Node(object):
 
     def get_children(self):
         return self.children
+
+    def get_classification(self):
+        return self.classification
+
+    def get_threshold(self):
+        return self.threshold
+

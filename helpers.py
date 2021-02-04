@@ -95,15 +95,16 @@ def calc_loss(test_dataframe: DataFrame, classifier: Node):
 
 # the classification algorithm. gets an object to classify and the classification tree.
 def dt_classify(patient_entry, tree_node: Node):
-    if tree_node.get_children() is None or len(tree_node.get_children()) == 0:
+    if tree_node.get_children() is None or len(tree_node.get_children()) == 0\
+            or (tree_node.get_children()[0] is None and tree_node.get_children()[1] is None):
         # if it's a leaf, we just return the classification stored there.
-        return tree_node.classification
+        return tree_node.get_classification()
 
     # for subtree in tree_node.children:
-    patient_feature_value = patient_entry[tree_node.feature]
-    if patient_feature_value >= tree_node.threshold:
-        return dt_classify(patient_entry, tree_node.children[1])
-    return dt_classify(patient_entry, tree_node.children[0])
+    patient_feature_value = patient_entry[tree_node.get_feature()]
+    if patient_feature_value >= tree_node.get_threshold():
+        return dt_classify(patient_entry, tree_node.get_children()[1])
+    return dt_classify(patient_entry, tree_node.get_children()[0])
 
 
 # calculating the probability for a specific classification in a given data
