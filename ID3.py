@@ -55,7 +55,6 @@ class ID3:
     # TD_IDT algorithm for ID3 algorithm with pre pruning
     def td_idt_pruning(self, examples: DataFrame, features: List[str], default_val, select_feature, pruning_m):
         if len(examples) < pruning_m:
-            # print("pruned!!!")
             # there is enough examples in current node so we can stop
             return Node(feature=None, children=None, classification=default_val)
 
@@ -89,7 +88,7 @@ class ID3:
 
 
 # to run exercise 3.3:
-# look for "exercise 3.3" comment in the main, and read the instructions there.
+# search for "exercise 3.3" comment in the main, and read the instructions there.
 def experiment(training_data: DataFrame, features_names):
     m_pruning_values = [2, 4, 8, 12, 16]
 
@@ -141,33 +140,31 @@ def majority_class(patients):
 
 if __name__ == '__main__':
 
-    # exercise 1:
+    # getting data from csv files:
     train_data = helpers.get_data_from_csv('train.csv')
     test_data = helpers.get_data_from_csv('test.csv')
     features_data = get_features_from_csv('train.csv')
 
+    # exercise 1:
     # id3_instance = ID3()
     # classifier_tree = id3_instance.id3_algo(train_data, features_data)
     # accuracy = helpers.calc_accuracy(test_data, classifier_tree)
     # print(accuracy)
 
     # exercise 3.3:
-    # uncomment this line for running the experiment.
-    # make sure the 3 lines from ex1 (for getting data from csv files) are uncommented
-    experiment(train_data, features_data)
+    # uncomment the coming line with "experiment" call, for running the experiment.
+    # make sure the 3 lines at the start of main (for getting data from csv files) are uncommented
 
-    # # exercise 3.4:
-    # # uncomment this line for running the experiment.
-    # # make sure the 3 lines from ex1 (for getting data from csv file) are uncommented
+    # experiment(train_data, features_data)
+
+    # exercise 3.4:
     # id3_pruning_instance3_4 = ID3()
     # classifier_tree = id3_pruning_instance3_4.id3_pruning(train_data, features_data, pruning_m=2)
     # accuracy = helpers.calc_accuracy(test_data, classifier_tree)
     # print(accuracy)
 
-    # # exercise 4.1:
-    # # uncomment this line for running the experiment.
-    # # make sure the 3 lines from ex1 (for getting data from csv file) are uncommented
-    # id3_pruning_instance3_4 = ID3()
-    # classifier_tree = id3_pruning_instance3_4.id3_pruning(train_data, features_data, pruning_m=2)
-    # loss = helpers.calc_loss(test_data, classifier_tree)
-    # print(accuracy)
+    # exercise 4.1:
+    id3_pruning_instance3_4 = ID3()
+    classifier_tree = id3_pruning_instance3_4.id3_pruning(train_data, features_data, pruning_m=2)
+    loss = helpers.calc_loss(test_data, classifier_tree)
+    print(loss)
