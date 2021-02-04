@@ -29,10 +29,10 @@ class ImprovedKNNForest:
 
     # This function does the testing part of the learning algorithm, with the testing_data,
     # and returns the accuracy it got
-    def improved_knn_knn_testing(self, examples: DataFrame, features: List[str], testing_data: DataFrame):
+    def improved_knn_testing(self, examples: DataFrame, features: List[str], testing_data: DataFrame):
         count = 0
         for index, patient_entry in testing_data.iterrows():
-            distances = self.get_distances(self.centroids, patient_entry, features)
+            distances = self.improved_knn_get_distances(self.centroids, patient_entry, features)
             indexes = range(len(distances))
             sorted_trees = sorted(indexes, key=lambda k: distances[k])
             k_trees = sorted_trees[:K_PARAM_FOR_KNN]
