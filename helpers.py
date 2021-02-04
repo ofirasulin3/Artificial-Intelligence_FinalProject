@@ -80,7 +80,6 @@ def dt_classify(patient_entry, tree_node: Node):
         # if it's a leaf, we just return the classification stored there.
         return tree_node.get_classification()
 
-    # for subtree in tree_node.children:
     patient_feature_value = patient_entry[tree_node.get_feature()]
     if patient_feature_value >= tree_node.get_threshold():
         return dt_classify(patient_entry, tree_node.get_children()[1])

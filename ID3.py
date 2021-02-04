@@ -44,7 +44,6 @@ class ID3:
 
     # ID3 algorithm with pre pruning
     def id3_pruning(self, examples: DataFrame, features: List[str], pruning_m):
-        # print('m_pruning_val inside id3_pruning is: ', pruning_m, '\n')
         c = majority_class(examples)
         return self.td_idt_pruning(examples, features, c, max_ig, pruning_m)
 
@@ -179,8 +178,3 @@ if __name__ == '__main__':
     # print(loss)
 
     # ----------------------------------------------------------------------------------------------
-
-
-
-
-

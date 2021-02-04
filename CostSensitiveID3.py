@@ -8,6 +8,7 @@ class CostSensitiveID3:
     # CostSensitiveID3 algorithm
     def cost_sensitive_id3_algo(self, examples: DataFrame, features: List[str]):
         c = cost_sensitive_majority_class(examples)
+        # adaption for cost sensitive algorithm: calling cost_sensitive_max_ig
         return self.cost_sensitive_td_idt_algo(examples, features, c, cost_sensitive_max_ig)
 
     # CostSensitive_TD_IDT algorithm for CostSensitiveID3 algorithm
@@ -82,46 +83,6 @@ class CostSensitiveID3:
         return Node(feature=f, children=children_tuple, classification=c, threshold=threshold)
 
 
-# # to run exercise 3.3:
-# # search for "exercise 3.3" comment in the main, and read the instructions there.
-# def cost_sensitive_experiment(training_data: DataFrame, features_names):
-#     m_pruning_values = [2, 4, 8, 12, 16]
-#
-#     accuracies_list = []
-#     avg = 0
-#     kf = KFold(n_splits=5, shuffle=True, random_state=316251305)
-#     for m_pruning_val in m_pruning_values:
-#         accuracy_sum = 0
-#         size_for_avg = 0
-#         curr_accuracies_list = []
-#         for train_i, test_i in kf.split(training_data):
-#
-#             train_info = training_data.iloc[train_i]
-#
-#             test_info = training_data.iloc[test_i]
-#
-#             curr_classifier_tree = CostSensitiveID3().cost_sensitive_id3_pruning(train_info, features_names,
-#                                                                                  m_pruning_val)
-#
-#             curr_accuracy = helpers.calc_accuracy(test_info, curr_classifier_tree)
-#             curr_accuracies_list.append(curr_accuracy)
-#
-#             accuracy_sum += curr_accuracy
-#             size_for_avg += 1
-#
-#         avg = accuracy_sum / size_for_avg
-#         accuracies_list.append(avg)
-#
-#     # Data for plotting
-#     fig1, ax1 = plt.subplots()
-#     ax1.plot(m_pruning_values, accuracies_list)
-#
-#     ax1.set(xlabel='M', ylabel='Accuracy', title='Accuracy as a function of M')
-#     ax1.grid()
-#
-#     plt.show()
-
-
 # gets patients entries and returns the most common diagnosis within them
 def cost_sensitive_majority_class(patients):
     ill = 0
@@ -131,6 +92,7 @@ def cost_sensitive_majority_class(patients):
             healthy += 1
         else:
             ill += 1
+    # adaption for cost sensitive algorithm:
     return ILL if 3 * ill >= healthy else HEALTHY
 
 
@@ -138,6 +100,7 @@ def cost_sensitive_majority_class(patients):
 def cost_sensitive_group_entropy(examples: DataFrame):
     ill_diagnosis_entropy = classification_entropy(examples, ILL)
     healthy_diagnosis_entropy = classification_entropy(examples, HEALTHY)
+    # adaption for cost sensitive algorithm:
     return - 10 * ill_diagnosis_entropy - healthy_diagnosis_entropy
 
 
