@@ -4,10 +4,14 @@ from math import log
 import pandas as pd
 from pandas import DataFrame
 from classifier_tree import *
-
 # defining the letters for the 2 available diagnosis for convenient use later
 ILL = 'M'
 HEALTHY = 'B'
+
+# parameters for KNN algorithm
+P_PARAM_FOR_KNN = 0.3
+N_PARAM_FOR_KNN = 13
+K_PARAM_FOR_KNN = 6
 
 
 # exporting the features from a given csv file and returns a list of it
