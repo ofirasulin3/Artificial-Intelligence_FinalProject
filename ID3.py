@@ -83,9 +83,13 @@ class ID3:
         return Node(feature=f, children=children_tuple, classification=c, threshold=threshold)
 
 
-# to run exercise 3.3:
-# search for "exercise 3.3" comment in the main, and read the instructions there.
+# a function that execute the experiment for exercise 3.3
 def experiment(training_data: DataFrame, features_names):
+    # ----------------------------
+    # to run exercise 3.3:
+    # search for "exercise 3.3" comment in the main, and read the instructions there.
+    # ----------------------------
+
     m_pruning_values = [2, 4, 8, 12, 16]
 
     accuracies_list = []
@@ -142,10 +146,11 @@ if __name__ == '__main__':
     features_data = get_features_from_csv('train.csv')
 
     # exercise 1:
-    # id3_instance = ID3()
-    # classifier_tree = id3_instance.id3_algo(train_data, features_data)
-    # accuracy = helpers.calc_accuracy(test_data, classifier_tree)
-    # print(accuracy)
+
+    id3_instance = ID3()
+    classifier_tree = id3_instance.id3_algo(train_data, features_data)
+    accuracy = helpers.calc_accuracy(test_data, classifier_tree)
+    print(accuracy)
 
     # ----------------------------------------------------------------------------------------------
     # exercise 3.3:
@@ -168,10 +173,10 @@ if __name__ == '__main__':
 
     # exercise 4.1:
 
-    id3_pruning_instance4_1 = ID3()
-    classifier_tree = id3_pruning_instance4_1.id3_pruning(train_data, features_data, pruning_m=2)
-    loss = helpers.calc_loss(test_data, classifier_tree)
-    print(loss)
+    # id3_pruning_instance4_1 = ID3()
+    # classifier_tree = id3_pruning_instance4_1.id3_pruning(train_data, features_data, pruning_m=2)
+    # loss = helpers.calc_loss(test_data, classifier_tree)
+    # print(loss)
 
     # ----------------------------------------------------------------------------------------------
 
